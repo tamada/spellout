@@ -1,0 +1,19 @@
+[package]
+name = "phonetic-code"
+description = ""
+license-file = "LICENSE"
+repository = "https://github.com/tamada/phonetic-code"
+version = "0.1.0"
+edition = "2024"
+authors = [
+    "Haruaki Tamada <tamada@users.noreply.github.com>"
+]
+categories = ["command-line-utilities", "encoding"]
+keywords = [ "phonetic-code", "nato" ]
+
+[dependencies]
+clap = { version = "4.5.23", features = [ "derive" ] }
+
+[[bin]]
+name = "pcode"
+path = "cli/main.rs"
