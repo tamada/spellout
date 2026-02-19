@@ -3,7 +3,7 @@
 [![build](https://github.com/tamada/spellout/actions/workflows/build.yaml/badge.svg)](https://github.com/tamada/spellout/actions/workflows/build.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/tamada/spellout/badge.svg?branch=main)](https://coveralls.io/github/tamada/spellout?branch=main)
 
-[![Version](https://img.shields.io/badge/Version-v0.1.0-green)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
+[![Version](https://img.shields.io/badge/Version-v0.1.0-blue)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 [![Docker](https://img.shields.io/badge/Docker-ghcr.io/tamada/spellout:0.1.0-blue?logo=docker)](https://github.com/tamada/spellout/pkgs/container/spellout/)
