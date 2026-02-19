@@ -1,7 +1,7 @@
 use std::{io::BufRead, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
-use spellout::{Codes, CodesBuilder, PhoneticCode};
+use spellout::{Codes, CodesBuilder, Error, PhoneticCode};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -9,12 +9,13 @@ struct CliOpts {
     #[arg(
         short, long, value_enum, hide_default_value = true, hide_possible_values = true, 
         default_value_t = PhoneticCode::Nato,
+        value_parser = parse_code,
         help = "Specify the phonetic code for encoding/decoding the input text.
 Default is NATO. Use `--list` option to see all available codes."
     )]
     code: PhoneticCode,
 
-    #[arg(short, long, default_value_t = false, help = "Prints the available phonetic codes.")]
+    #[arg(short, long, default_value_t = false, help = "Prints the available phonetic codes. ")]
     list: bool,
 
     #[arg(short, long, default_value_t = false, help = "Prints the phonetic codes for the given type.")]
@@ -85,7 +86,7 @@ fn encode_words(codes: &Codes, only: bool, words: Vec<String>) {
 }
 
 fn print_list() {
-    for pc in PhoneticCode::value_variants() {
+    for pc in PhoneticCode::available_names() {
         println!("{pc}");
     }
 }
@@ -115,10 +116,20 @@ fn decode_all(codes: &Codes, arg: Vec<String>) {
     println!("{}", codes.decode(inputs));
 }
 
+fn parse_code(s: &str) -> Result<PhoneticCode, String> {
+    if let Ok(pc) = PhoneticCode::from_str(s, true) {
+        Ok(pc)
+    } else if spellout::is_available_name(s) {
+        Ok(PhoneticCode::Asset(s.to_string()))
+    } else {
+        Err(format!("Invalid phonetic code: {s}"))
+    }
+}
+
 #[cfg(debug_assertions)]
 mod gencomp;
 
-fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
+fn perform(opts: CliOpts) -> Result<(), Error> {
     let codes = if let Some(input) = opts.input {
         CodesBuilder::build_from_file(input)?
     } else {
@@ -143,6 +154,6 @@ fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
 fn main() {
     let opts = CliOpts::parse();
     if let Err(e) = perform(opts) {
-        eprintln!("Error: {e}");
+        eprintln!("Error: {e:?}");
     }
 }

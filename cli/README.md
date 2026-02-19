@@ -11,6 +11,10 @@ You can install the CLI tool (`spellout`) using Homebrew :beer::
 brew install tamada/tap/spellout
 ```
 
+## Demo
+
+![demo](../docs/static/images/demo.gif)
+
 ## :runner: Usage
 
 The help message of `spellout` provides detailed information on how to use the CLI tool:

@@ -1,0 +1,4 @@
+base:NATO
+\u{00C6}  Ærlig
+\u{00D8}  Østen
+\u{00C5}  Åse
