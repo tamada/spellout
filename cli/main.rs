@@ -29,6 +29,10 @@ Default is NATO. Use `--list` option to see all available codes."
     #[arg(long, value_name = "FILE", help = "Specify the the path to a custom phonetic code file.")]
     input: Option<PathBuf>,
 
+    #[cfg(debug_assertions)]
+    #[arg(long, hide = true, default_value_t = false, help = "Generates completion files.")]
+    gencomp: bool,
+
     #[arg(help = "The words to encode using the specified phonetic code.
 Gives '-' read from stdin. No arguments also reads from stdin.")]
     args: Vec<String>,
@@ -111,13 +115,21 @@ fn decode_all(codes: &Codes, arg: Vec<String>) {
     println!("{}", codes.decode(inputs));
 }
 
+#[cfg(debug_assertions)]
+mod gencomp;
+
 fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
     let codes = if let Some(input) = opts.input {
         CodesBuilder::build_from_file(input)?
     } else {
         CodesBuilder::build(opts.code)
     };
-    if opts.list {
+    if cfg!(debug_assertions) {
+        #[cfg(debug_assertions)]
+        if opts.gencomp {
+            gencomp::generate(std::path::Path::new("assets/completions"));
+        }
+    } else if opts.list {
         print_list()
     } else if opts.print {
         print_all(&codes, opts.only);

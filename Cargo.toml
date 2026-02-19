@@ -1,6 +1,6 @@
 [package]
 name = "spellout"
-description = ""
+description = "A phonetic code encoder/decoder"
 license-file = "LICENSE"
 repository = "https://github.com/tamada/spellout"
 version = "0.1.0"
@@ -17,6 +17,7 @@ normalization = [ "unicode-normalization" ]
 
 [dependencies]
 clap = { version = "4.5.23", features = [ "derive" ] }
+clap_complete = "4.5.66"
 unicode-normalization = { version = "0.1.25", optional = true }
 
 [[bin]]

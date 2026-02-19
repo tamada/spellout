@@ -1,0 +1,39 @@
+
+use builtin;
+use str;
+
+set edit:completion:arg-completer[spellout] = {|@words|
+    fn spaces {|n|
+        builtin:repeat $n ' ' | str:join ''
+    }
+    fn cand {|text desc|
+        edit:complex-candidate $text &display=$text' '(spaces (- 14 (wcswidth $text)))$desc
+    }
+    var command = 'spellout'
+    for word $words[1..-1] {
+        if (str:has-prefix $word '-') {
+            break
+        }
+        set command = $command';'$word
+    }
+    var completions = [
+        &'spellout'= {
+            cand -c 'Specify the phonetic code for encoding/decoding the input text. Default is NATO. Use `--list` option to see all available codes.'
+            cand --code 'Specify the phonetic code for encoding/decoding the input text. Default is NATO. Use `--list` option to see all available codes.'
+            cand --input 'Specify the the path to a custom phonetic code file.'
+            cand -l 'Prints the available phonetic codes.'
+            cand --list 'Prints the available phonetic codes.'
+            cand -p 'Prints the phonetic codes for the given type.'
+            cand --print 'Prints the phonetic codes for the given type.'
+            cand --only-code 'Prints the only phonetic code for the given words.'
+            cand -d 'Decodes given phonetic codes into string.'
+            cand --decode 'Decodes given phonetic codes into string.'
+            cand --gencomp 'Generates completion files.'
+            cand -h 'Print help'
+            cand --help 'Print help'
+            cand -V 'Print version'
+            cand --version 'Print version'
+        }
+    ]
+    $completions[$command]
+}

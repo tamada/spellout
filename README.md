@@ -1,6 +1,13 @@
 # spellout
 
+[![build](https://github.com/tamada/spellout/actions/workflows/build.yaml/badge.svg)](https://github.com/tamada/spellout/actions/workflows/build.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/tamada/spellout/badge.svg?branch=main)](https://coveralls.io/github/tamada/spellout?branch=main)
+
+[![Version](https://img.shields.io/badge/Version-v0.1.0-green)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+[![Docker](https://img.shields.io/badge/Docker-ghcr.io/tamada/spellout:0.1.0-blue?logo=docker)](https://github.com/tamada/spellout/pkgs/container/spellout/)
+[![Homebrew](https://img.shields.io/badge/Homebrew-tamada/tap/spellout-blue?logo=homebrew)](https://github.com/tamada/homebrew-tap)
 
 `spellout` is a Rust library and command-line tool for converting text into various phonetic codes, also known as spelling alphabets. It supports a wide range of predefined alphabets like the NATO phonetic alphabet, as well as custom alphabets defined by the user.
 
@@ -102,6 +109,35 @@ uk
 usaairpots
 japanese
 ```
+
+### :whale: Docker Available
+
+You can also run `spellout` using Docker:
+
+```sh
+docker run --rm -it ghcr.io/tamada/spellout:latest "Hello World"
+H    Hotel
+e    Echo
+l    Lima
+l    Lima
+o    Oscar
+
+W    Whiskey
+o    Oscar
+r    Romeo
+l    Lima
+d    Delta
+```
+
+#### Available tags
+
+- `latest` (the latest version of `no-features-glibc`)
+- `$VERSION-no_features_glibc`
+- `$VERSION-no_features-musl`
+- `$VERSION-unicode_normalization_glibc`
+- `$VERSION-unicode_normalization_musl`
+
+`$VERSION` is the version of `spellout` (e.g., `0.1.0`).
 
 ## Library Usage
 
