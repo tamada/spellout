@@ -53,4 +53,5 @@ jobs:
       - name: build
         run: |
           rustup target add ${{ matrix.target }}
-          cargo build --release --target ${{ matrix.target }}
+          cargo install cargo-zigbuild
+          cargo zigbuild --release --target ${{ matrix.target }}
