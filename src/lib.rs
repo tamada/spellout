@@ -267,7 +267,7 @@ impl CodesBuilder {
 /// ```rust
 /// use spellout::{CodesBuilder, PhoneticCode};
 /// 
-/// let codes = CodesBuilder::build_from_file("testdata/custom_codes.txt")
+/// let codes = CodesBuilder::build_from_file("testdata/custom_code.txt")
 ///     .expect("Failed to read phonetic codes from file");
 /// ```
 /// 
@@ -429,7 +429,7 @@ mod tests {
 
     #[test]
     fn test_from_file() {
-        let codes = CodesBuilder::build_from_file("testdata/custom_codes.txt")
+        let codes = CodesBuilder::build_from_file("testdata/custom_code.txt")
             .expect("Failed to read phonetic codes from file");
         assert_eq!(codes.code('A').map(|c| c.code()), Some("Arctic".to_string()));
         assert_eq!(codes.code('B').map(|c| c.code()), Some("Bishop".to_string()));

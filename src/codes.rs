@@ -110,8 +110,8 @@ mod tests {
     #[test]
     fn test_list_assets() {
         let assets = list_assets();
-        assert!(assets.contains(&"denmark.txt".to_string()));
-        assert!(assets.contains(&"switzerland.txt".to_string()));
+        assert!(assets.contains(&"denmark".to_string()));
+        assert!(assets.contains(&"switzerland".to_string()));
         assert_eq!(assets.len(), 6);
     }
 
