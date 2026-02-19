@@ -1,12 +1,17 @@
-use std::path::PathBuf;
+use std::{io::BufRead, path::PathBuf};
 
-use clap::{Parser, ValueEnum, arg, command};
+use clap::{Parser, ValueEnum};
 use phonetic_code::{Codes, CodesBuilder, PhoneticCode};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct CliOpts {
-    #[arg(short, long, value_enum, default_value_t = PhoneticCode::Nato, help = "Specify the phonetic code for encoding the input text.")]
+    #[arg(
+        short, long, value_enum, hide_default_value = true, hide_possible_values = true, 
+        default_value_t = PhoneticCode::Nato,
+        help = "Specify the phonetic code for encoding/decoding the input text.
+Default is NATO. Use `--list` option to see all available codes."
+    )]
     code: PhoneticCode,
 
     #[arg(short, long, default_value_t = false, help = "Prints the available phonetic codes.")]
@@ -18,41 +23,92 @@ struct CliOpts {
     #[arg(long = "only-code", default_value_t = false, help = "Prints the only phonetic code for the given words.")]
     only: bool,
 
-    #[arg(long, help = "Specify the the path to a custom phonetic code file.")]
+    #[arg(short, long, default_value_t = false, help = "Decodes given phonetic codes into string.")]
+    decode: bool,
+
+    #[arg(long, value_name = "FILE", help = "Specify the the path to a custom phonetic code file.")]
     input: Option<PathBuf>,
 
-    #[arg(help = "The words to encode using the specified phonetic code.")]
+    #[arg(help = "The words to encode using the specified phonetic code.
+Gives '-' read from stdin. No arguments also reads from stdin.")]
     args: Vec<String>,
 }
 
-fn print_all(codes: Codes, only: bool) {
+fn print_all(codes: &Codes, only: bool) {
     for code in codes.entries() {
         if only {
             println!("{}", code.letter());
         } else {
-            println!("{}: {}", code.letter(), code.code());
+            println!("{}    {}", code.letter(), code.code());
         }
     }
 }
 
-fn encode_words(codes: Codes, only: bool, words: Vec<String>) {
-    for c in words.join(" ").chars() {
-        if let Some(code) = codes.code(c) {
-            if only {
-                println!("{}", code.code());
-            } else {
-                println!("{}    {} ", c, code.code());
-            }
+fn encode_string(codes: &Codes, only: bool, input: String) {
+    for (letter, code) in codes.encode(input.as_ref()) {
+        if !only {
+            print!("{letter}    ");
+        }
+        if let Some(c) = code {
+            println!("{}", c.code());
         } else {
-            println!("{} ", c);
+            println!();
+        }
+    }
+}
+
+fn handle_stdin(codes: &Codes, only: bool) {
+    for line in collect_inputs_from_stdin() {
+        encode_string(codes, only, line);
+    }
+}
+
+fn encode_words(codes: &Codes, only: bool, words: Vec<String>) {
+    if words.is_empty() {
+        handle_stdin(codes, only);
+    } else {
+        for (i, word) in words.into_iter().enumerate() {
+            if i > 0 {
+                println!();
+            }
+            if word == "-" {
+                handle_stdin(codes, only);
+            } else {
+                encode_string(codes, only, word);
+            }
         }
     }
 }
 
 fn print_list() {
-    for code in PhoneticCode::value_variants() {
-        println!("{}", code);
+    for pc in PhoneticCode::value_variants() {
+        println!("{pc}");
     }
+}
+
+fn collect_inputs_from_stdin() -> Vec<String> {
+    let mut inputs = Vec::new();
+    let stdin = std::io::stdin();
+    for line in stdin.lock().lines().map_while(Result::ok) {
+        inputs.push(line);
+    }
+    inputs
+}
+
+fn decode_all(codes: &Codes, arg: Vec<String>) {
+    let mut inputs = Vec::new();
+    if arg.is_empty() {
+        inputs = collect_inputs_from_stdin();
+    } else {
+        for a in arg {
+            if a == "-" {
+                inputs.extend(collect_inputs_from_stdin());
+            } else {
+                inputs.push(a);
+            }
+        }
+    }
+    println!("{}", codes.decode(inputs));
 }
 
 fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
@@ -64,9 +120,11 @@ fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
     if opts.list {
         print_list()
     } else if opts.print {
-        print_all(codes, opts.only);
+        print_all(&codes, opts.only);
+    } else if opts.decode {
+        decode_all(&codes, opts.args);
     } else {
-        encode_words(codes, opts.only, opts.args);
+        encode_words(&codes, opts.only, opts.args);
     }
     Ok(())
 }

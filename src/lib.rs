@@ -46,10 +46,10 @@ pub fn code(letter: char) -> Option<&'static Code> {
 /// Returns an iterator over the characters in the given string and their corresponding phonetic codes.
 /// The iterator yields a tuple of the character and an `Option<&Code>`, where the
 /// `Option<&Code>` is `Some(&Code)` if the character has a corresponding phonetic code, and `None` otherwise.
-pub fn convert(words: &str) -> impl Iterator<Item = (char, Option<&Code>)> {
+pub fn encode(words: &str) -> impl Iterator<Item = (char, Option<&Code>)> {
     NATO.get_or_init(|| {
         PhoneticCode::of(PhoneticCode::Nato)
-    }).convert(words)
+    }).encode(words)
 }
 
 /// Returns an iterator over all the phonetic codes in the NATO alphabet.
@@ -62,7 +62,7 @@ pub fn entries() -> impl Iterator<Item = &'static Code> {
 /// Predefined phonetic codes.
 #[derive(Clone, Debug, PartialEq, Eq, Hash, ValueEnum)]
 pub enum PhoneticCode {
-    /// 
+    /// California Highway Patrol Phonetic Alphabet.
     Chp,
     English,
     Eu,
@@ -282,7 +282,7 @@ impl Codes {
             map.insert(code.letter(), code);
         }
         let mut codes = map.into_values().collect::<Vec<_>>();
-        codes.sort_by(|a, b| a.letter().cmp(&b.letter()));
+        codes.sort_by_key(|a| a.letter());
         Codes { codes }
     }
 
@@ -297,9 +297,56 @@ impl Codes {
         self.codes.iter()
     }
 
+    /// Extends the current `Codes` struct with another `Codes` struct, by merging their phonetic codes.
+    /// Note that the ownership of the given `other` is consumed in the process.
+    pub fn extend(&mut self, other: Codes) {
+        let mut map = self.codes.iter().map(|c| (c.letter(), c.clone())).collect::<HashMap<_, _>>();
+        for code in other.codes {
+            map.insert(code.letter(), code);
+        }
+        let mut codes = map.into_values().collect::<Vec<_>>();
+        codes.sort_by_key(|a| a.letter());
+        self.codes = codes;
+    }
+
+    /// Concatenates `self` and `other` and create another `Codes` struct, by merging their phonetic codes.
+    pub fn concat(&self, other: &Codes) -> Codes {
+        let mut map = self.codes.iter()
+            .map(|c| (c.letter(), c.clone())).collect::<HashMap<_, _>>();
+        for code in other.codes.iter() {
+            map.insert(code.letter(), code.clone());
+        }
+        let mut codes = map.into_values().collect::<Vec<_>>();
+        codes.sort_by_key(|a| a.letter());
+        Codes { codes }
+    }
+
+    /// Decodes a list of phonetic codes into a string, by finding the corresponding character for each code.
+    /// If a code does not have a corresponding character, it is replaced with a space character in the output string.
+    pub fn decode(&self, items: Vec<String>) -> String {
+        let mut result = Vec::new();
+        for item in items {
+            match self.codes.iter().find(|c| c.code == item) {
+                Some(code) => result.push(code.letter()),
+                None => result.push(' '),
+            }
+        }
+        result.into_iter().collect()
+    }
+
     /// Converts a string into an iterator of characters and their corresponding phonetic codes.
-    pub fn convert(&self, words: &str) -> impl Iterator<Item = (char, Option<&Code>)> {
+    #[cfg(not(feature = "normalization"))]
+    pub fn encode(&self, words: &str) -> impl Iterator<Item = (char, Option<&Code>)> {
         words.chars().map(move |c| (c, self.code(c)))
+    }
+
+    /// Converts a string into an iterator of characters and their corresponding phonetic codes.
+    /// The method normalizes the input string using [Unicode Normalization](https://crates.io/crates/unicode-normalization) Form C (NFC) before processing,
+    /// which can be useful for handling characters that can be represented in multiple ways in Unicode.
+    #[cfg(feature = "normalization")]
+    pub fn encode(&self, words: &str) -> impl Iterator<Item = (char, Option<&Code>)> {
+        use unicode_normalization::UnicodeNormalization;
+        words.nfc().map(move |c| (c, self.code(c)))
     }
 }
 

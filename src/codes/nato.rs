@@ -49,5 +49,15 @@ fn phonetic_codes() -> Vec<Code> {
         Code::new('X', "X-ray"),
         Code::new('Y', "Yankee"),
         Code::new('Z', "Zulu"),
+        Code::new('0', "Zero"),
+        Code::new('1', "One"),
+        Code::new('2', "Two"),
+        Code::new('3', "Three"),
+        Code::new('4', "Four"),
+        Code::new('5', "Five"),
+        Code::new('6', "Six"),
+        Code::new('7', "Seven"),
+        Code::new('8', "Eight"),
+        Code::new('9', "Nine"),
     ]
 }
