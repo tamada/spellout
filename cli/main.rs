@@ -124,12 +124,11 @@ fn perform(opts: CliOpts) -> Result<(), Box<dyn std::error::Error>> {
     } else {
         CodesBuilder::build(opts.code)
     };
-    if cfg!(debug_assertions) {
-        #[cfg(debug_assertions)]
-        if opts.gencomp {
-            gencomp::generate(std::path::Path::new("assets/completions"));
-        }
-    } else if opts.list {
+    #[cfg(debug_assertions)]
+    if cfg!(debug_assertions) && opts.gencomp {
+        gencomp::generate(std::path::Path::new("assets/completions"));
+    }
+    if opts.list {
         print_list()
     } else if opts.print {
         print_all(&codes, opts.only);
