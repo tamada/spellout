@@ -1,0 +1,23 @@
+# build stage
+FROM --platform=$BUILDPLATFORM rust:1-alpine AS builder
+
+WORKDIR /usr/src/app
+COPY . .
+
+# install musl-tools
+RUN apk add --no-cache musl-dev build-base
+RUN rustup target add x86_64-unknown-linux-musl
+RUN cargo build --release --bin spellout --features normalization
+
+# run stage
+FROM --platform=$BUILDPLATFORM alpine:latest
+
+LABEL org.opencontainers.image.source="https://github.com/tamada/phonetic-code"
+LABEL org.opencontainers.image.description="A spellout tool."
+LABEL org.opencontainers.image.licenses="MIT"
+
+RUN adduser -S nonroot
+WORKDIR /opt/spellout
+COPY --from=builder /usr/src/app/target/release/spellout .
+USER nonroot
+ENTRYPOINT ["/opt/spellout/spellout"]

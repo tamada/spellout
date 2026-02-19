@@ -1,0 +1,20 @@
+# build stage
+FROM --platform=$BUILDPLATFORM rust:1-bullseye AS builder
+
+WORKDIR /usr/src/app
+COPY . .
+
+RUN cargo build --release --bin spellout
+
+# run stage
+FROM --platform=$BUILDPLATFORM debian:bullseye-slim
+
+LABEL org.opencontainers.image.source="https://github.com/tamada/phonetic-code"
+LABEL org.opencontainers.image.description="A spellout tool."
+LABEL org.opencontainers.image.licenses="MIT"
+
+RUN adduser --system --disabled-password --gecos "" nonroot
+WORKDIR /opt/spellout
+COPY --from=builder /usr/src/app/target/release/spellout .
+USER nonroot
+ENTRYPOINT ["/opt/spellout/spellout"]
