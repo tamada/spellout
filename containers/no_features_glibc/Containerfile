@@ -9,7 +9,7 @@ RUN cargo build --release --bin spellout
 # run stage
 FROM --platform=$BUILDPLATFORM debian:bullseye-slim
 
-LABEL org.opencontainers.image.source="https://github.com/tamada/phonetic-code"
+LABEL org.opencontainers.image.source="https://github.com/tamada/spellout"
 LABEL org.opencontainers.image.description="A spellout tool."
 LABEL org.opencontainers.image.licenses="MIT"
 

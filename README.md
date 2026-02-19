@@ -1,8 +1,8 @@
-# phonetic-code
+# spellout
 
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`phonetic-code` is a Rust library and command-line tool for converting text into various phonetic codes, also known as spelling alphabets. It supports a wide range of predefined alphabets like the NATO phonetic alphabet, as well as custom alphabets defined by the user.
+`spellout` is a Rust library and command-line tool for converting text into various phonetic codes, also known as spelling alphabets. It supports a wide range of predefined alphabets like the NATO phonetic alphabet, as well as custom alphabets defined by the user.
 
 ## Features
 
@@ -14,7 +14,7 @@
 
 ## CLI Installation & Usage
 
-### Installation
+### :anchor: Installation
 
 You can install the CLI tool using Cargo:
 
@@ -30,7 +30,7 @@ To convert a string to the default NATO phonetic alphabet:
 spellout "Hello World"
 ```
 
-Output:
+**Output:**
 ```
 H    Hotel 
 e    Echo 
@@ -53,7 +53,7 @@ Use the `-c` or `--code` option to specify a different phonetic alphabet.
 spellout -c uk "Radio"
 ```
 
-Output:
+**Output:**
 ```
 R    Robert 
 a    Able 
@@ -70,7 +70,7 @@ You can define your own alphabet in a file and use it with the `--input` option.
 spellout --input testdata/custom_codes.txt "Test"
 ```
 
-Output:
+**Output:**
 ```
 T    Target
 e    Echo-Six
@@ -85,7 +85,7 @@ To see a list of all supported predefined alphabets, use the `-l` or `--list` fl
 spellout -l
 ```
 
-Output:
+**Output:**
 ```
 chp
 english
@@ -105,17 +105,17 @@ japanese
 
 ## Library Usage
 
-To use `phonetic-code` in your Rust project, add it to your `Cargo.toml`:
+To use `spellout` in your Rust project, add it to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-phonetic-code = "0.1.0" # Check for the latest version
+spellout = "0.1.0" # Check for the latest version
 ```
 
 ### Example: Convert a word using a predefined alphabet
 
 ```rust
-use phonetic_code::{CodesBuilder, PhoneticCode};
+use spellout::{CodesBuilder, PhoneticCode};
 
 fn main() {
     // Build the UK phonetic alphabet
@@ -135,7 +135,7 @@ fn main() {
 
 ## Supported Alphabets
 
-`phonetic-code` supports the following built-in phonetic alphabets:
+`spellout` supports the following built-in phonetic alphabets:
 
 - `chp`
 - `english`

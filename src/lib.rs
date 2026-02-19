@@ -10,15 +10,15 @@
 //! If the character is not found in the phonetic alphabet, it returns `None`.
 //! 
 //! ```rust
-//! assert_eq!(phonetic_code::code('a').map(|c| c.code()), Some("Alpha".to_string()));
-//! assert_eq!(phonetic_code::code('b').map(|c| c.code()), Some("Bravo".to_string()));
-//! assert_eq!(phonetic_code::code('c').map(|c| c.code()), Some("Charlie".to_string()));
+//! assert_eq!(spellout::code('a').map(|c| c.code()), Some("Alpha".to_string()));
+//! assert_eq!(spellout::code('b').map(|c| c.code()), Some("Bravo".to_string()));
+//! assert_eq!(spellout::code('c').map(|c| c.code()), Some("Charlie".to_string()));
 //! ```
 //! 
 //! #### Get the phonetic codes for a word
 //! 
 //! ```rust
-//! use phonetic_code::{CodesBuilder, PhoneticCode};
+//! use spellout::{CodesBuilder, PhoneticCode};
 //! 
 //! let codes = CodesBuilder::build(PhoneticCode::Uk);
 //! assert_eq!(codes.code('a').map(|c| c.code()), Some("Able".to_string()));
@@ -245,7 +245,7 @@ impl CodesBuilder {
 /// #### Create a `Codes` struct from a predefined phonetic code
 /// 
 /// ```rust
-/// use phonetic_code::{CodesBuilder, PhoneticCode};
+/// use spellout::{CodesBuilder, PhoneticCode};
 /// 
 /// let nato = CodesBuilder::build(PhoneticCode::Nato);
 /// let uk = CodesBuilder::build(PhoneticCode::Uk);
@@ -254,7 +254,7 @@ impl CodesBuilder {
 /// #### Create a `Codes` struct from a file
 /// 
 /// ```rust
-/// use phonetic_code::{CodesBuilder, PhoneticCode};
+/// use spellout::{CodesBuilder, PhoneticCode};
 /// 
 /// let codes = CodesBuilder::build_from_file("testdata/custom_codes.txt")
 ///     .expect("Failed to read phonetic codes from file");
@@ -263,7 +263,7 @@ impl CodesBuilder {
 /// #### Create a `Codes` struct from a `parse` method
 /// 
 /// ```rust
-/// use phonetic_code::Codes;
+/// use spellout::Codes;
 /// 
 /// let eu = "eu".parse::<Codes>()
 ///     .expect("Failed to read phonetic codes from file");
@@ -420,7 +420,7 @@ mod tests {
         assert_eq!(crate::code('a').map(|c| c.code()), Some("Alpha".to_string()));
         assert_eq!(crate::code('b').map(|c| c.code()), Some("Bravo".to_string()));
         assert_eq!(crate::code('c').map(|c| c.code()), Some("Charlie".to_string()));
-        assert_eq!(usa_airpots.entries().count(), 29);
+        assert_eq!(usa_airpots.entries().count(), 39);
     }
 
     #[test]
@@ -428,7 +428,7 @@ mod tests {
         let usa_airpots = CodesBuilder::build(PhoneticCode::USAAirpots);
         assert_eq!(usa_airpots.code('D').map(|c| c.code()), Some("Dixie".to_string()));
         assert_eq!(usa_airpots.code('A').map(|c| c.code()), Some("Alpha".to_string()));
-        assert_eq!(usa_airpots.entries().count(), 29);
+        assert_eq!(usa_airpots.entries().count(), 39);
     }
 
     #[test]

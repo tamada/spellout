@@ -1,7 +1,7 @@
 use std::{io::BufRead, path::PathBuf};
 
 use clap::{Parser, ValueEnum};
-use phonetic_code::{Codes, CodesBuilder, PhoneticCode};
+use spellout::{Codes, CodesBuilder, PhoneticCode};
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

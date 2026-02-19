@@ -1,6 +1,6 @@
-# CLI command of phonetic-code
+# CLI command of spellout
 
-This is the CLI command of the `phonetic-code` library.
+This is the CLI command of the `spellout` library.
 It provides a command-line interface to get the phonetic code for a given character or word.
 
 ## :anchor: Installation
