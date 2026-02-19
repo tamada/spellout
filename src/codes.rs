@@ -44,7 +44,7 @@ pub(crate) fn build_from_asset(name: &str) -> Result<Codes, Error> {
     if let Some(file) = ASSETS.get_file(asset_name) {
         build_from_reader(file.contents())
     } else {
-        Err(Error::Asset(format!("{name}")))
+        Err(Error::Asset(name.to_string()))
     }
 }
 
@@ -55,8 +55,8 @@ pub(crate) fn build_from_reader(reader: impl std::io::Read) -> Result<Codes, Err
         let line = trim_and_strip_comments(&line);
         if line.is_empty() || line.starts_with('#') {
             continue;
-        } else if line.starts_with("base:") {
-            let base_code = line["base:".len()..].trim();
+        } else if let Some(base_code) = line.strip_prefix("base:") {
+            let base_code = base_code.trim();
             if let Ok(base) = base_code.parse::<Codes>() {
                 base.entries().for_each(|entry| codes.push(entry.clone()));
             } else {

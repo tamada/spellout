@@ -110,7 +110,7 @@ impl Display for PhoneticCode {
             PhoneticCode::USAAirpots => write!(f, "usaairpots"),
             PhoneticCode::Japanese => write!(f, "japanese"),
             PhoneticCode::Indonesia => write!(f, "indonesia"),
-            PhoneticCode::Asset(name) => write!(f, "{}", name),
+            PhoneticCode::Asset(name) => write!(f, "{name}"),
         }
     }
 }
