@@ -28,7 +28,7 @@ copyright = "Copyright &copy; 2026 by Haruaki Tamada. Made with [Hugo](https://g
 [[menus.main]]
     identifier = "github"
     pre = "github"
-    url = "https://github.com/tamada/sibling"
+    url = "https://github.com/tamada/spellout"
     weight = 200
 [[menus.footer]]
     name = ":smile: About"

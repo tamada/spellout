@@ -65,7 +65,7 @@ Sleep 500ms
 Enter
 Sleep 1s
 
-Type "# spellout can also decode the given phenetic code back to the original text by --decode option."
+Type "# spellout can also decode the given phonetic code back to the original text by --decode option."
 Sleep 200ms
 Enter
 Type "spellout Hello World --only-code | spellout --decode"

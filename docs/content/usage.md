@@ -21,7 +21,7 @@ Options:
   -p, --print         Prints the phonetic codes for the given type.
       --only-code     Prints the only phonetic code for the given words.
   -d, --decode        Decodes given phonetic codes into string.
-      --input <FILE>  Specify the the path to a custom phonetic code file.
+      --input <FILE>  Specify the path to a custom phonetic code file.
   -h, --help          Print help
   -V, --version       Print version
 ```

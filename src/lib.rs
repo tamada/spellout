@@ -35,9 +35,28 @@ mod codes;
 #[derive(Debug)]
 pub enum Error {
     Asset(String),
+    FileNotFound(String, Option<std::io::Error>),
     IO(std::io::Error),
     Parse(String),
     UnknownPhoneticCode(String),
+}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::Asset(name) => write!(f, "{name}: Phonetic code asset not found"),
+            Error::FileNotFound(path, error) => {
+                if let Some(e) = error {
+                    write!(f, "{path}: File not found: {e}")
+                } else {
+                    write!(f, "{path}: File not found")
+                }
+            },
+            Error::IO(e) => write!(f, "I/O error: {e}"),
+            Error::Parse(msg) => write!(f, "Parse error: {msg}"),
+            Error::UnknownPhoneticCode(name) => write!(f, "{name}: Unknown phonetic code"),
+        }
+    }
 }
 
 static NATO: OnceLock<Codes> = OnceLock::new();
@@ -160,7 +179,10 @@ impl PhoneticCode {
             PhoneticCode::USAAirpots => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('D', "Dixie")]),
             PhoneticCode::Indonesia => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('L', "London")]),
             PhoneticCode::Philippines => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('H', "Hawk")]),
-            PhoneticCode::Asset(name) => codes::build_from_asset(&name).unwrap_or_else(|_| Codes::new_of(PC::Null, Vec::new())),
+            PhoneticCode::Asset(name) => codes::build_from_asset(&name).unwrap_or_else(|err| {
+                log::warn!("Failed to load phonetic code asset '{name}': {err}");
+                Codes::new_of(PC::Null, Vec::new())
+            }),
         }
     }
 

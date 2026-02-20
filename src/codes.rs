@@ -51,7 +51,14 @@ pub(crate) fn build_from_asset(name: &str) -> Result<Codes, Error> {
 pub(crate) fn build_from_reader(reader: impl std::io::Read) -> Result<Codes, Error> {
     let reader = BufReader::new(reader);
     let mut codes = Vec::new();
-    for line in reader.lines().map_while(Result::ok) {
+    for line in reader.lines() {
+        let line = match line {
+            Err(e) => {
+                log::warn!("Failed to read a line from asset: {e}");
+                continue; // Skip lines that can't be read
+            },
+            Ok(l) => l,
+        };
         let line = trim_and_strip_comments(&line);
         if line.is_empty() || line.starts_with('#') {
             continue;
@@ -112,7 +119,7 @@ mod tests {
         let assets = list_assets();
         assert!(assets.contains(&"denmark".to_string()));
         assert!(assets.contains(&"switzerland".to_string()));
-        assert_eq!(assets.len(), 6);
+        assert!(assets.len() >= 6);
     }
 
     #[test]

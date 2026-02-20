@@ -27,7 +27,7 @@ Default is NATO. Use `--list` option to see all available codes."
     #[arg(short, long, default_value_t = false, help = "Decodes given phonetic codes into string.")]
     decode: bool,
 
-    #[arg(long, value_name = "FILE", help = "Specify the the path to a custom phonetic code file.")]
+    #[arg(long, value_name = "FILE", help = "Specify the path to a custom phonetic code file.")]
     input: Option<PathBuf>,
 
     #[cfg(debug_assertions)]
@@ -94,8 +94,11 @@ fn print_list() {
 fn collect_inputs_from_stdin() -> Vec<String> {
     let mut inputs = Vec::new();
     let stdin = std::io::stdin();
-    for line in stdin.lock().lines().map_while(Result::ok) {
-        inputs.push(line);
+    for line in stdin.lock().lines() {
+        match line {
+            Ok(line) => inputs.push(line),
+            Err(e) => eprintln!("Failed to read a line from stdin: {e}"),
+        }
     }
     inputs
 }
