@@ -3,8 +3,8 @@
 [![build](https://github.com/tamada/spellout/actions/workflows/build.yaml/badge.svg)](https://github.com/tamada/spellout/actions/workflows/build.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/tamada/spellout/badge.svg?branch=main)](https://coveralls.io/github/tamada/spellout?branch=main)
 
-[![Version](https://img.shields.io/badge/Version-v0.1.0-blue)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
-[![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-v0.1.0-information)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
+[![LICENSE](https://img.shields.io/badge/license-MIT-information)](LICENSE)
 
 [![Docker](https://img.shields.io/badge/Docker-ghcr.io/tamada/spellout:0.1.0-blue?logo=docker)](https://github.com/tamada/spellout/pkgs/container/spellout/)
 [![Homebrew](https://img.shields.io/badge/Homebrew-tamada/tap/spellout-blue?logo=homebrew)](https://github.com/tamada/homebrew-tap)
@@ -189,5 +189,7 @@ fn main() {
 - `usaairpots` (Based on NATO)
 
 ## License
+
+[![LICENSE](https://img.shields.io/badge/license-MIT-information)](LICENSE)
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
