@@ -41,17 +41,22 @@ jobs:
       tag: ${{ needs.setup.outputs.tag }}
       upload_url: ${{ needs.setup.outputs.upload_url }}
     steps:
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: '0.129.0'
-          extended: true
-
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.154.5'
+          extended: true
 
       - name: Build Site
         run: |
@@ -105,7 +110,7 @@ jobs:
             ext: ''
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           fetch-depth: 0
@@ -159,7 +164,7 @@ jobs:
       tag: ${{ needs.publish.outputs.tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Authenticate with custom registry
         id: auth
