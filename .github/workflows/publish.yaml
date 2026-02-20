@@ -117,13 +117,16 @@ jobs:
           DIR=$(echo "${{ needs.documents.outputs.appname }}-${{ needs.documents.outputs.tag }}")
           echo "dir=$DIR" >> $GITHUB_OUTPUT
 
-      - name: Setup Rust
-        run: rustup update stable
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v2
 
       - name: build
         run: |
+          rustup update stable
           rustup target add ${{ matrix.target }}
-          cargo build --release --target ${{ matrix.target }}
+          cargo install cargo-zigbuild
+          cargo zigbuild --release --target ${{ matrix.target }}
+          # cargo zigbuild --release --features normalization --target ${{ matrix.target }} --target-dir normalization
 
       # publish release
       - name: Create release file

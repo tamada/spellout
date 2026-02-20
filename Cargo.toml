@@ -18,6 +18,8 @@ normalization = [ "unicode-normalization" ]
 [dependencies]
 clap = { version = "4.5.23", features = [ "derive" ] }
 clap_complete = "4.5.66"
+include_dir = "0.7.4"
+log = "0.4.29"
 unicode-normalization = { version = "0.1.25", optional = true }
 
 [[bin]]

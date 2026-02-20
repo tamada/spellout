@@ -1,0 +1,33 @@
+# refs. https://en.wikipedia.org/wiki/DIN_5009
+A	Anton
+\u{00C4}	Ärger
+B	Berta
+C	Cäsar
+# Ch	Charlotte
+D	Dora
+E	Emil
+F	Friedrich
+G	Gustav
+H	Heinrich
+I	Ida
+J	Julius
+K	Kaufmann
+L	Ludwig
+M	Martha
+N	Nordpol
+O	Otto
+\u{00D6}	Ökonom
+P	Paula
+Q	Quelle
+R	Richard
+S	Samuel
+# Sch	Schule
+\u{1E9E}	Eszett
+T	Theodor
+U	Ulrich
+\u{00DC}	Übermut
+V	Viktor
+W	Wilhelm
+X	Xanthippe
+Y	Ypsilon
+Z	Zacharias

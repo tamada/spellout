@@ -1,0 +1,33 @@
+# refs. https://ja.wikipedia.org/wiki/NATOフォネティックコード#ドイツ語圏のコード表
+A	Anton
+\u{00C4}	Ärger
+B	Berta
+C	Cäsar
+# Ch	Christine (慣例でない)
+D	Dora
+E	Emil
+F	Friedrich
+G	Gustav
+H	Heinrich
+I	Ida
+J	Julius
+K	Konrad
+L	Ludwig
+M	Martha
+N	Nordpol
+O	Otto
+\u{00D6}	Österreich
+P	Paula
+Q	Quelle
+R	Richard
+S	Siegfried
+# Sch	Schule
+\u{1E9E}	scharfes S
+T	Theodor
+U	Ulrich
+\u{00DC}	Übel
+V	Viktor
+W	Wilhelm
+X	Xaver
+Y	Ypsilon
+Z	Zürich

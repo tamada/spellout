@@ -1,0 +1,4 @@
+base:NATO
+\u{00C6}  Ægir
+\u{00D8}  Ødis
+\u{00C5}  Åse

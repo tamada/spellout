@@ -1,0 +1,31 @@
+# refs. https://en.wikipedia.org/wiki/DIN_5009
+A	Aachen
+\u{00C4}	Umlaut Aachen
+B	Berlin
+C	Chemnitz
+D	Düsseldorf
+E	Essen
+F	Frankfurt
+G	Goslar
+H	Hamburg
+I	Ingelheim
+J	Jena
+K	Köln
+L	Leipzig
+M	München
+N	Nürnberg
+O	Offenbach
+\u{00D6}	Umlaut Offenbach
+P	Potsdam
+Q	Quickborn
+R	Rostock
+S	Salzwedel
+\u{1E9E}	Eszett
+T	Tübingen
+U	Unna
+\u{00DC}	Umlaut Unna
+V	Völklingen
+W	Wuppertal
+X	Xanten
+Y	Ypsilon
+Z	Zwickau

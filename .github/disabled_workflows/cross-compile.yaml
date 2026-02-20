@@ -1,4 +1,5 @@
 name: cross-build
+
 on:
   push:
     branches:
@@ -50,11 +51,9 @@ jobs:
       - name: Setup zig
         uses: mlugg/setup-zig@v2
 
-      - name: Setup Rust
-        run: rustup update stable
-
       - name: build
         run: |
+          rustup update stable
           rustup target add ${{ matrix.target }}
           cargo install cargo-zigbuild
           cargo zigbuild --release --target ${{ matrix.target }}

@@ -1,21 +1,9 @@
-# CLI command of spellout
+---
+title: ":runner: Usage"
+date: 2026-02-19
+---
 
-This is the CLI command of the `spellout` library.
-It provides a command-line interface to get the phonetic code for a given character or word.
-
-## :anchor: Installation
-
-You can install the CLI tool (`spellout`) using Homebrew :beer::
-
-```sh
-brew install tamada/tap/spellout
-```
-
-## Demo
-
-![demo](../docs/static/images/demo.gif)
-
-## :runner: Usage
+## Help Message
 
 The help message of `spellout` provides detailed information on how to use the CLI tool:
 
@@ -33,7 +21,7 @@ Options:
   -p, --print         Prints the phonetic codes for the given type.
       --only-code     Prints the only phonetic code for the given words.
   -d, --decode        Decodes given phonetic codes into string.
-      --input <FILE>  Specify the the path to a custom phonetic code file.
+      --input <FILE>  Specify the path to a custom phonetic code file.
   -h, --help          Print help
   -V, --version       Print version
 ```
@@ -159,3 +147,81 @@ Delta
 $ cat codes.txt | spellout --decode
 HELLO WORLD
 ```
+
+### :whale: Docker Available
+
+You can also run `spellout` using Docker:
+
+```sh
+docker run --rm -it ghcr.io/tamada/spellout:latest "Hello World"
+H    Hotel
+e    Echo
+l    Lima
+l    Lima
+o    Oscar
+
+W    Whiskey
+o    Oscar
+r    Romeo
+l    Lima
+d    Delta
+```
+
+#### Available tags
+
+- `latest` (the latest version of `no-features-glibc`)
+- `$VERSION-no_features_glibc`
+- `$VERSION-no_features-musl`
+- `$VERSION-unicode_normalization_glibc`
+- `$VERSION-unicode_normalization_musl`
+
+`$VERSION` is the version of `spellout` (e.g., `0.1.0`).
+
+## Library Usage
+
+To use `spellout` in your Rust project, add it to your `Cargo.toml`:
+
+```toml
+[dependencies]
+spellout = "0.1.0" # Check for the latest version
+```
+
+### Example: Convert a word using a predefined alphabet
+
+```rust
+use spellout::{CodesBuilder, PhoneticCode};
+
+fn main() {
+    // Build the UK phonetic alphabet
+    let codes = CodesBuilder::build(PhoneticCode::Uk);
+
+    // Convert a word and print the results
+    let word = "Hello";
+    for (char, code) in codes.convert(word) {
+        if let Some(c) = code {
+            println!("{}    {}", char, c.code());
+        } else {
+            println!("{} ", char);
+        }
+    }
+}
+```
+
+## Supported Alphabets
+
+`spellout` supports the following built-in phonetic alphabets:
+
+- `chp`
+- `english`
+- `eu`
+- `france`
+- `indonesia` (Based on NATO)
+- `international`
+- `italia`
+- `japanese`
+- `nato` (Default)
+- `netherlands`
+- `philippines` (Based on NATO)
+- `sweden`
+- `uk`
+- `usaairpots` (Based on NATO)

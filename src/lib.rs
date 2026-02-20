@@ -27,13 +27,43 @@
 use std::collections::HashMap;
 use std::fmt::Display;
 use std::{fs::File, path::Path, str::FromStr, sync::OnceLock};
-use std::io::{BufRead, BufReader};
 
 use clap::ValueEnum;
 
 mod codes;
 
+#[derive(Debug)]
+pub enum Error {
+    Asset(String),
+    FileNotFound(String, Option<std::io::Error>),
+    IO(std::io::Error),
+    Parse(String),
+    UnknownPhoneticCode(String),
+}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::Asset(name) => write!(f, "{name}: Phonetic code asset not found"),
+            Error::FileNotFound(path, error) => {
+                if let Some(e) = error {
+                    write!(f, "{path}: File not found: {e}")
+                } else {
+                    write!(f, "{path}: File not found")
+                }
+            },
+            Error::IO(e) => write!(f, "I/O error: {e}"),
+            Error::Parse(msg) => write!(f, "Parse error: {msg}"),
+            Error::UnknownPhoneticCode(name) => write!(f, "{name}: Unknown phonetic code"),
+        }
+    }
+}
+
 static NATO: OnceLock<Codes> = OnceLock::new();
+
+pub fn is_available_name(name: &str) -> bool {
+    codes::is_available_name(name)
+}
 
 /// Returns the phonetic code for a given character.
 /// If the character is not found in the phonetic alphabet, it returns `None`.
@@ -78,6 +108,8 @@ pub enum PhoneticCode {
     Uk,
     USAAirpots,
     Japanese,
+    #[clap(skip)]
+    Asset(String),
 }
 
 impl Display for PhoneticCode {
@@ -97,17 +129,18 @@ impl Display for PhoneticCode {
             PhoneticCode::USAAirpots => write!(f, "usaairpots"),
             PhoneticCode::Japanese => write!(f, "japanese"),
             PhoneticCode::Indonesia => write!(f, "indonesia"),
+            PhoneticCode::Asset(name) => write!(f, "{name}"),
         }
     }
 }
 
 impl FromStr for Codes {
-    type Err = String;
+    type Err = Error;
     /// Converts a string into a [`Codes`] struct, by matching the string against the predefined phonetic code names (see [`PhoneticCode`]).
     /// 
     /// If the string matches a known phonetic code name, it returns a `Codes` struct, and does not match, it returns an error message.
     /// The matching is case-insensitive, so for example "nato", "NATO", and "NaTo" would all match the [`PhoneticCode::Nato`] variant.
-    fn from_str(s: &str) -> Result<Self, String> {
+    fn from_str(s: &str) -> Result<Self, Error> {
         match s.to_lowercase().as_str() {
             "chp" => Ok(PhoneticCode::of(PhoneticCode::Chp)),
             "english" => Ok(PhoneticCode::of(PhoneticCode::English)),
@@ -123,7 +156,7 @@ impl FromStr for Codes {
             "usaairpots" => Ok(PhoneticCode::of(PhoneticCode::USAAirpots)),
             "japanese" => Ok(PhoneticCode::of(PhoneticCode::Japanese)),
             "indonesia" => Ok(PhoneticCode::of(PhoneticCode::Indonesia)),
-            _ => Err(format!("{s}: Unknown phonetic code name")),
+            _ => Ok(PhoneticCode::Asset(s.to_string()).of()),
         }
     }
 }
@@ -146,7 +179,20 @@ impl PhoneticCode {
             PhoneticCode::USAAirpots => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('D', "Dixie")]),
             PhoneticCode::Indonesia => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('L', "London")]),
             PhoneticCode::Philippines => Codes::new_of(PC::Nato(codes::Nato::new()), vec![Code::new('H', "Hawk")]),
+            PhoneticCode::Asset(name) => codes::build_from_asset(&name).unwrap_or_else(|err| {
+                log::warn!("Failed to load phonetic code asset '{name}': {err}");
+                Codes::new_of(PC::Null, Vec::new())
+            }),
         }
+    }
+
+    pub fn available_names() -> Vec<String> {
+        let mut entries = codes::list_assets();
+        for pc in PhoneticCode::value_variants() {
+            entries.push(pc.to_string());
+        }
+        entries.sort();
+        entries
     }
 }
 
@@ -202,6 +248,7 @@ impl CodesBuilder {
             PhoneticCode::USAAirpots => (PC::Nato(codes::Nato::new()), codes.into_iter().chain(vec![Code::new('D', "Dixie")]).collect()),
             PhoneticCode::Indonesia => (PC::Nato(codes::Nato::new()), codes.into_iter().chain(vec![Code::new('L', "London")]).collect()),
             PhoneticCode::Philippines => (PC::Nato(codes::Nato::new()), codes.into_iter().chain(vec![Code::new('H', "Hawk")]).collect()),            
+            PhoneticCode::Asset(name) => (PC::Null, codes::build_from_asset(&name).unwrap_or_else(|_| Codes::new_of(PC::Null, Vec::new())).codes),
         };
         Codes::new_of(pc, codes)
     }
@@ -213,24 +260,10 @@ impl CodesBuilder {
     /// Lines that are empty or start with a '#' character are ignored as comments.
     /// 
     /// Note that, the each line must be splitted into two parts by the delimiter, otherwise it will be ignored.
-    pub fn build_from_file<P: AsRef<Path>>(path: P) -> Result<Codes, std::io::Error> {
-        let file = File::open(path)?;
-        let reader = BufReader::new(file);
-        let mut codes = Vec::new();
-        for line in reader.lines() {
-            let line = line?;
-            let line = trim_and_strip_comments(&line);
-            if line.is_empty() || line.starts_with('#') {
-                continue;
-            }
-            let parts: Vec<&str> = line.split([',', ';', ':', '=', '\t']).collect();
-            if parts.len() == 2 {
-                let alphabet = parts[0].chars().next().unwrap_or_default();
-                let code = parts[1].trim().to_string();
-                codes.push(Code::new(alphabet, code));
-            }
-        }
-        Ok(Codes::new_of(PC::Null, codes))
+    pub fn build_from_file<P: AsRef<Path>>(path: P) -> Result<Codes, Error> {
+        let file = File::open(path)
+            .map_err(Error::IO)?;
+        codes::build_from_reader(file)
     }
 }
 
@@ -256,7 +289,7 @@ impl CodesBuilder {
 /// ```rust
 /// use spellout::{CodesBuilder, PhoneticCode};
 /// 
-/// let codes = CodesBuilder::build_from_file("testdata/custom_codes.txt")
+/// let codes = CodesBuilder::build_from_file("testdata/custom_code.txt")
 ///     .expect("Failed to read phonetic codes from file");
 /// ```
 /// 
@@ -388,21 +421,6 @@ trait PhoneticAlphabet {
     fn into_entries(self) -> impl Iterator<Item = Code>;
 }
 
-fn trim_and_strip_comments(line: &str) -> &str {
-    let line = line.trim();
-    let mut search_from = 0; // find the position of first '#' with no escape.
-    while let Some(pos) = line[search_from..].find('#') {
-        let actual_pos = search_from + pos;
-        // found '#' is the first character, or is not escaped.
-        if actual_pos == 0 || !line[..actual_pos].ends_with('\\') {
-            return line[..actual_pos].trim();
-        }
-        // try next search, since the found '#' is escaped
-        search_from = actual_pos + 1;
-    }
-    line // '#' was not found.
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -433,20 +451,10 @@ mod tests {
 
     #[test]
     fn test_from_file() {
-        let codes = CodesBuilder::build_from_file("testdata/custom_codes.txt")
+        let codes = CodesBuilder::build_from_file("testdata/custom_code.txt")
             .expect("Failed to read phonetic codes from file");
         assert_eq!(codes.code('A').map(|c| c.code()), Some("Arctic".to_string()));
         assert_eq!(codes.code('B').map(|c| c.code()), Some("Bishop".to_string()));
         assert_eq!(codes.entries().count(), 26);
-    }
-
-    #[test]
-    fn test_trim_and_strip_comments() {
-        assert_eq!(trim_and_strip_comments("  A, Alpha  "), "A, Alpha");
-        assert_eq!(trim_and_strip_comments("A, Alpha # This is a comment"), "A, Alpha");
-        assert_eq!(trim_and_strip_comments("A, Alpha \\# Not a comment"), "A, Alpha \\# Not a comment");
-        assert_eq!(trim_and_strip_comments("A, Alpha # Comment with escaped \\# character"), "A, Alpha");
-        assert_eq!(trim_and_strip_comments("  # This is a comment line  "), ""); // Line with only a comment should return an empty string after trimming
-        assert_eq!(trim_and_strip_comments("  A, Alpha # Comment with leading and trailing spaces  "), "A, Alpha"); // Comment
     }
 }
