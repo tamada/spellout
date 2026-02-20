@@ -8,10 +8,28 @@ INFO=$(get_crate_info)
 CRATE_NAME=${INFO%% *}
 VERSION=${INFO#* }
 
-for i in no_features_glibc no_features_musl unicode_normalization_glibc unicode_normalization_musl; do
-    echo "Building image for $CRATE_NAME:$VERSION-$i..."
-    docker buildx build --platform linux/amd64,linux/arm64 --push -t tamada/$CRATE_NAME:$VERSION-$i -f containers/$i/Containerfile .
-done
+echo "Building image for $CRATE_NAME:$VERSION-no_features_glibc..."
+docker buildx build --platform linux/amd64,linux/arm64 --push \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-no_features_glibc \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-glibc \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION \
+    -f containers/no_features_glibc/Containerfile .
+
+echo "Building image for $CRATE_NAME:$VERSION-no_features_musl..."
+docker buildx build --platform linux/amd64,linux/arm64 --push \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-no_features_musl \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-musl \
+    -f containers/no_features_musl/Containerfile .
+
+echo "Building image for $CRATE_NAME:$VERSION-unicode_normalization_glibc..."
+docker buildx build --platform linux/amd64,linux/arm64 --push \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-unicode_normalization_glibc \
+    -f containers/unicode_normalization_glibc/Containerfile .
+
+echo "Building image for $CRATE_NAME:$VERSION-unicode_normalization_musl..."
+docker buildx build --platform linux/amd64,linux/arm64 --push \
+    -t ghcr.io/tamada/$CRATE_NAME:$VERSION-unicode_normalization_musl \
+    -f containers/unicode_normalization_musl/Containerfile .
 
 # docker buildx build -t spellout:no_features_glibc   -f containers/no_features_glibc/Containerfile .
 # docker buildx build -t spellout:no_features_musl    -f containers/no_features_musl/Containerfile .

@@ -4,9 +4,9 @@ title: ":house: Home"
 ---
 
 {{< keywordList markdownify="true" >}}
-[![crates.io](https://img.shields.io/badge/crates.io-v0.1.0-orange.svg?logo=rust)](https://crates.io/crates/spellout)
+[![crates.io](https://img.shields.io/badge/crates.io-v0.1.1-orange.svg?logo=rust)](https://crates.io/crates/spellout)
   [![License](https://img.shields.io/badge/License-MIT-information.svg)](https://github.com/tamada/spellout/blob/master/LICENSE)
-[![Version](https://img.shields.io/badge/Version-v0.1.0-information.svg)](https://github.com/tamada/spellout/releases/tag/v0.1.0)
+[![Version](https://img.shields.io/badge/Version-v0.1.1-information.svg)](https://github.com/tamada/spellout/releases/tag/v0.1.1)
 
 [![build](https://github.com/tamada/spellout/actions/workflows/build.yaml/badge.svg)](https://github.com/tamada/spellout/actions/workflows/build.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/tamada/spellout/badge.svg?branch=main)](https://coveralls.io/github/tamada/spellout?branch=main)
