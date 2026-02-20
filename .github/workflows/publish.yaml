@@ -158,6 +158,10 @@ jobs:
 
   publish_to_crates_io:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
     needs: publish
     outputs:
       appname: ${{ needs.publish.outputs.appname }}
