@@ -126,6 +126,7 @@ jobs:
           rustup target add ${{ matrix.target }}
           cargo install cargo-zigbuild
           cargo zigbuild --release --target ${{ matrix.target }}
+          # cargo zigbuild --release --features normalization --target ${{ matrix.target }} --target-dir normalization
 
       # publish release
       - name: Create release file
